@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAAW Stores Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .document-container {
+            width: 60%;
+            padding: 30px;
+            border: 2px solid #000;
+            background-color: white;
+            margin-right: 20px;
+            position: relative;
+        }
+        .input-form {
+            width: 35%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        #generateBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #generateBtn:hover {
+            background-color: #45a049;
+        }
+        #printBtn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #printBtn:hover {
+            background-color: #0b7dda;
+        }
+        .document-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            text-decoration: underline;
+        }
+        .document-subtitle {
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .document-line {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+        .document-label {
+            width: 150px;
+            font-weight: bold;
+        }
+        .document-value {
+            flex-grow: 1;
+            padding-left: 10px;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: right;
+            margin-right: 90px;
+            margin-top: 100px;
+        }
+        .signature-box {
+            text-align: right;
+            width: 200px;
+        }
+        .approval-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .document-container, .document-container * {
+                visibility: visible;
+            }
+            .document-container {
+                position: absolute;
+                left: 50%;
+                top: 0;
+                transform: translateX(-50%);
+                width: 80%;
+                border: 2px solid #000 !important;
+                padding: 30px !important;
+                margin: 0 auto;
+                background-color: white;
+                box-sizing: border-box;
+            }
+            .input-form, #generateBtn, #printBtn {
+                display: none;
+            }
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            box-sizing: border-box;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            padding: 10px 0;
+        }
+        .modal-body {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .modal-document {
+            border: 2px solid #000;
+            padding: 30px;
+            background-color: white;
+            transform-origin: top center;
+            transform: scale(0.9);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .document-container, .input-form {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+            }
+            .modal-document {
+                padding: 15px;
+                transform: scale(0.85);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="document-container">
+        <div class="document-title">SAAW STORES MANAGEMENT</div><br><br>
+        <div class="document-subtitle">Following Items are issued to:</div><br><br>
+
+        <div class="document-line">
+            <div class="document-label">Name:</div>
+            <div class="document-value" id="preview-name"></div>
+        </div>
+        <div class="document-line">
+            <div class="document-label">Designation:</div>
+            <div class="document-value" id="preview-designation"></div>
+        </div>
+        <div class="document-line">
+            <div class="document-label">Connector Part No:</div>
+            <div class="document-value" id="preview-partno"></div>
+        </div>
+        <div class="document-line">
+            <div class="document-label">Qty:</div>
+            <div class="document-value" id="preview-quantity"></div>
+        </div>
+        <div class="document-line">
+            <div class="document-label">Date of Issue:</div>
+            <div class="document-value" id="preview-date"></div>
+        </div>
+        <div class="document-line">
+            <div class="document-label">Time of Issue:</div>
+            <div class="document-value" id="preview-time"></div>
+        </div>
+        <br><br>
+        <div class="signature-section"><br><br><br>
+            <div class="signature-box">
+                <div>Signature</div>
+            </div>
+        </div>
+        <br><br><br><br>
+        <div class="approval-section">
+            <div>Approved</div><br><br><br>
+            <div>Project Director<br>EO-SAAW</div>
+        </div><br><br><br>
+    </div>
+
+    <div class="input-form">
+        <h2>Enter Issue Details</h2>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter recipient name">
+        </div>
+        <div class="form-group">
+            <label for="designation">Designation:</label>
+            <select id="designation">
+                <option value="">Select Designation</option>
+                <option value="Contract Engineer">Contract Engineer</option>
+                <option value="Scientist">Scientist</option>
+                <option value="Employee">Employee</option>
+                <option value="Technician">Technician</option>
+                <option value="Manager">Manager</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="partno">Connector Part No:</label>
+            <input type="text" id="partno" placeholder="Enter part number">
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="text" id="quantity" placeholder="Enter quantity">
+        </div>
+        <div class="form-group">
+            <label for="date">Date of Issue:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="form-group">
+            <label for="time">Time of Issue:</label>
+            <input type="time" id="time" step="60">
+        </div>
+        <button id="generateBtn" onclick="updateDocument()">Generate Document</button>
+        <button id="printBtn" onclick="showPrintPreview()">Print Document</button>
+    </div>
+
+    <!-- Print Preview Modal -->
+    <div id="printModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Document Preview</h2>
+                <p>Review your document before printing:</p>
+            </div>
+            <div class="modal-body">
+                <div class="modal-document" id="modalDocument">
+                    <!-- Document content will be copied here -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="closeModal()" style="background-color: #f44336; color: white;">Cancel</button>
+                <button onclick="printDocument()" style="background-color: #2196F3; color: white;">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateDocument() {
+            // Get values from input fields
+            const name = document.getElementById('name').value;
+            const designation = document.getElementById('designation').value;
+            const partno = document.getElementById('partno').value;
+            const quantity = document.getElementById('quantity').value;
+            const date = document.getElementById('date').value;
+            const timeInput = document.getElementById('time');
+            
+            // Format date to display in DD/MM/YYYY format
+            let formattedDate = '';
+            if (date) {
+                const [year, month, day] = date.split('-');
+                formattedDate = `${day}/${month}/${year}`;
+            }
+            
+            // Format time in 12-hour format with AM/PM
+            let formattedTime = '';
+            if (timeInput.value) {
+                const timeParts = timeInput.value.split(':');
+                const hours = parseInt(timeParts[0]);
+                const minutes = timeParts[1];
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                formattedTime = `${displayHours}:${minutes} ${ampm}`;
+            }
+            
+            // Update the document preview
+            document.getElementById('preview-name').textContent = name;
+            document.getElementById('preview-designation').textContent = designation;
+            document.getElementById('preview-partno').textContent = partno;
+            document.getElementById('preview-quantity').textContent = quantity;
+            document.getElementById('preview-date').textContent = formattedDate;
+            document.getElementById('preview-time').textContent = formattedTime;
+        }
+        
+        function showPrintPreview() {
+            // Update the document first to ensure we have latest values
+            updateDocument();
+            
+            // Copy the document content to the modal
+            const documentContent = document.querySelector('.document-container').cloneNode(true);
+            document.getElementById('modalDocument').innerHTML = '';
+            
+            // Scale down the document for better fit
+            documentContent.style.transform = 'scale(1)';
+            documentContent.style.width = '100%';
+            documentContent.style.boxSizing = 'border-box';
+            documentContent.style.margin = '0';
+            
+            document.getElementById('modalDocument').appendChild(documentContent);
+            
+            // Show the modal
+            document.getElementById('printModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
+        
+        function printDocument() {
+            closeModal();
+            window.print();
+        }
+        
+        // Set default date to today and time to now
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Set default time to current time in 12-hour format
+            const now = new Date();
+            let hours = now.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+            
+            // For the input field, we need to use 24-hour format
+            const time24 = now.getHours().toString().padStart(2, '0') + ':' + minutes;
+            document.getElementById('time').value = time24;
+            
+            // Initialize the document with default values
+            updateDocument();
+        });
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('printModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

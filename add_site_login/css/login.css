@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: url('../images/IMG_20250509_223753.jpg'); /* Ensure this is the correct relative path */
+  background-size: cover;             /* Ensures the image covers the entire screen */
+  background-position: center center; /* Centers the image both vertically and horizontally */
+  background-repeat: no-repeat;       /* Prevents image from repeating */
+  background-attachment: fixed;       /* Optional: keeps the background fixed on scroll */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ONLY .login overlay, no background image */
+.login {
+  background-color: rgba(0, 0, 0, 0.6); /* dark semi-transparent overlay */
+  padding: 30px;
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+}
+
+.login h2 {
+  font-size: 2em;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.inputBx {
+  margin-bottom: 20px;
+}
+
+.inputBx input {
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  border: 2px solid #fff;
+  border-radius: 40px;
+  font-size: 1.1em;
+  color: #fff;
+  outline: none;
+}
+
+.inputBx input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.inputBx input[type="submit"] {
+  background: linear-gradient(45deg, #099bfc, #ffbc03);
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
+.error-message {
+  font-size: 13px;
+  color: red;
+  display: block;
+  margin-top: 5px;
+}
+
+.links {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
