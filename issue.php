@@ -464,6 +464,7 @@ $total_records = $result->num_rows;
         </div>
     </div>   
     <div class="menu-bar">
+         <a href="#" onclick="window.history.back(); return false;" >← Back</a>
         <a href="index.php"><img src="images/icons8-home-30.png" class="menu-icon" alt="Home">Home</a>
         <a href="view.php"><img src="images/icons8-view-30.png" class="menu-icon" alt="View">View</a>
         <a href="issue.php"><img src="images/icons8-view-30.png" class="menu-icon" alt="Issue">Issued List</a>
